@@ -1,6 +1,18 @@
 <?php
 
+namespace App\Models;
+
+use App\Models\Post;
 use Illuminate\Support\Facades\Route;
+use Facade\FlareClient\Stacktrace\File;
+
+use Spatie\YamlFrontMatter\YamlFrontMatter;
+use Illuminate\Support\Facades\File as FacadesFile;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use League\CommonMark\Extension\FrontMatter\Data\LibYamlFrontMatterParser;
+use League\CommonMark\Extension\FrontMatter\Data\SymfonyYamlFrontMatterParser;
+
+
 
 /*
 |--------------------------------------------------------------------------
@@ -14,20 +26,13 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('posts');
+    return view('posts', [
+        'posts' => Post::all()
+    ]);
 });
 
-Route::get("posts/{post}", function ($slug) {
-
-    $path = __DIR__ . "/../resources/posts/{$slug}.html";
-
-    if (! file_exists($path)) {
-        return redirect('/');
-    }
-
-    $post = file_get_contents($path);
-
+Route::get("posts/{post:slug}", function (Post $post) {
     return view('post', [
-        'post' => $post
+        'post' => $post 
     ]);
 });
